@@ -111,11 +111,5 @@ TEST 1: Leader election
 **Почему `asyncio` + `http.server`, а не FastAPI?**
 Задание требует реализации без внешних библиотек. `asyncio` — стандартная библиотека Python. `http.server` — тоже. Raft-логика в asyncio, HTTP-сервер в отдельном потоке. Связь между ними через `run_coroutine_threadsafe`.
 
-**Почему `urllib` + `run_in_executor`, а не чистый async TCP?**
-`urllib.request` — стандартная библиотека. `run_in_executor` позволяет запускать синхронный urllib в пуле потоков не блокируя event loop. Это проще и надёжнее чем самостоятельно парсить HTTP поверх `asyncio.open_connection`.
-
-**Почему `delete` — преимущество перед аналогами?**
-Лог хранит команды с явным полем `op: "set" | "delete"`. Большинство учебных реализаций Raft используют только `dict.update()` — это означает что удалить ключ невозможно. Явная типизация команд в логе решает эту проблему.
-
 **`match_index` в `AppendEntriesResponse`**
 При откате (follower отстал) лидер получает от фолловера точный индекс до которого тот синхронизирован и сразу устанавливает `next_index[peer] = match_index + 1`. Без этого лидер декрементировал бы `next_index` по одному — O(n) round-trips вместо O(1).
